@@ -1,0 +1,27 @@
+pipeline{
+    agent any
+    environment {
+        PATH = "/opt/apache-maven-3.9.5/bin:$PATH"
+    }
+    stages{
+		stage('GetCode'){
+            steps{
+				git branch: 'master',
+                url: 'https://github.com/Kiran3100/01-maven-app.git'
+            }
+         }         
+       stage('Build'){
+            steps{
+                sh 'mvn clean package'
+            }
+         }
+        stage('SonarQube analysis') {
+            steps{
+                withSonarQubeEnv('Sonar-Server-7.8') {
+                    sh "mvn sonar:sonar"
+                }
+            }
+        }
+       
+    }
+}
